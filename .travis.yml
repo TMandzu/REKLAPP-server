@@ -1,0 +1,7 @@
+language: java
+
+deploy:
+   provider: heroku
+   api_key: "016703be-8743-4097-8f4a-aaefcdea38df"
+   app: reklapp-server
+
