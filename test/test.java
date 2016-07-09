@@ -1,7 +1,7 @@
 /**
  * Created by Meko on 10/06/2016.
  */
-import ge.reklapp.PingService;
+import ge.reklapp.service.PingService;
 
 import javax.ws.rs.core.*;
 import static org.junit.Assert.*;

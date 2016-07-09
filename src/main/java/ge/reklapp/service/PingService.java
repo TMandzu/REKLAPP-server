@@ -1,4 +1,4 @@
-package ge.reklapp;
+package ge.reklapp.service;
 
 import javax.ws.rs.*;
 import javax.ws.rs.core.*;
