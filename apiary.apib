@@ -14,33 +14,32 @@ Returns html status code 200, if the server is alive.
 + Response 200 (application/json)
 
 
-## Temperature [/houses/{house_id}/temperature]
+## User's Money [/users/{mobile_number}/money]
 
-### Get Current Temperature [GET]
+### Get Money for User [GET]
 
-returns current temperature in celsius and farenheit.
+Returns money user have on balance in GEL.
 
 + Parameter
-    + house_id (required, string, `"d28f9e91-ea20-43cf-abf5-24f3d659afef"`)
+    + mobile_number (required, string, `555555555`)
     String returned in Location header field.
     
 + Response 200 (application/json)
 
         [
             {
-                "temp_c": "15",
-                "temp_f": "59"
+                "money": "1.00"
             }
         ]
 
-## Rain [/houses/{house_id}/rain]
+## Random Advertisment [/users/{mobile_number}/advertisments/random]
 
-### Get Next 24 Hours Raining Forecast [GET]
+### Get Random Advertisment [GET]
 
-returns "yes" or "no" whether it will rain in the next 24 hours.
+Returns video link.
 
 + Parameter
-    + house_id (required, string, `"d28f9e91-ea20-43cf-abf5-24f3d659afef"`)
+    + mobile_number (required, string, `555555555`)
     String returned in Location header field.
     
 
@@ -48,6 +47,111 @@ returns "yes" or "no" whether it will rain in the next 24 hours.
 
         [
             {
-                "rain": "yes"
+                "link": "https://ia600201.us.archive.org/22/items/ksnn_compilation_master_the_internet/ksnn_compilation_master_the_internet_512kb.mp4"
             }
         ]
+        
+        
+## Custom Advertisment [/users/{mobile_number}/advertisments/custom/{custom_advertisment_string}]
+
+### Get Custom Advertisment [GET]
+
+Returns video link.
+
++ Parameter
+    + mobile_number (required, string, `555555555`)
+    String returned in Location header field.
+    
+
++ Response 200 (application/json)
+
+        [
+            {
+                "link": "https://ia600201.us.archive.org/22/items/ksnn_compilation_master_the_internet/ksnn_compilation_master_the_internet_512kb.mp4"
+            }
+        ]
+        
+        
+## User Data [/users]
+
+### Add User [PUT]
+
+Adds user to server database.
+
++ Request (application/json)
+
+        {
+            "name": "თორნიკე",
+            "surname": "მანძულაშვილი",
+            "pin": "01019080139",
+            "country" : "საქართველო",
+            "city" : "თბილისი",
+            "street_address" : "თემქა კაროჩე",
+            "mobile_number" : "555555555",
+            "email" : "tornikeman@gmail.com"
+        }
+        
++ Response 200 (application/json)
+        
++ Request (application/json)
+
+        {
+            "name": "თორნიკე",
+            "surname": "მანძულაშვილი",
+            "pin": "0101908013923232323",
+            "country" : "საქართველო",
+            "city" : "თბილისი",
+            "street_address" : "თემქა კაროჩე",
+            "mobile_number" : "555555555",
+            "email" : "tornikeman@gmail.com"
+        }
+
+
++ Response 400 (application/json)
+
+        [
+            {
+                "problem": "რამხელა პინია რა არი ეგ?!"
+            }
+        ]
+        
+        
+### Update User [POST]
+
+Updates user in server database.
+
++ Request (application/json)
+
+        {
+            "name": "თორნიკე",
+            "surname": "მანძულაშვილი",
+            "pin": "01019080139",
+            "country" : "საქართველო",
+            "city" : "თბილისი",
+            "street_address" : "თემქა კაროჩე",
+            "old_mobile_number" : "555555555",
+            "mobile_number" : "555555555",
+            "email" : "tornikeman@gmail.com",
+            "money" : "0"
+        }
+        
++ Response 200 (application/json)
+        
+## Transfer Money [/users/{mobile_number}/transfer]
+
+### Transfer money [POST]
+
+Transfers money to your balance.
+
++ Parameter
+    + mobile_number (required, string, `555555555`)
+    String returned in Location header field.
+
++ Request (application/json)
+
+        {
+            "address" : "555555555",
+            "amound" : "1.0"
+        }
+        
++ Response 200 (application/json)
