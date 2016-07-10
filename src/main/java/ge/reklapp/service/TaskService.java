@@ -13,9 +13,6 @@ import java.sql.ResultSet;
 /**
  * Created by Tornike on 10.07.2016.
  */
-@Path("ping")
-@Consumes( { MediaType.APPLICATION_JSON})
-@Produces( { MediaType.APPLICATION_JSON})
 public class TaskService {
     @PUT
     @Path("users")
