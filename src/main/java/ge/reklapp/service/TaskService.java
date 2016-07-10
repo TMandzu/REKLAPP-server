@@ -82,7 +82,7 @@ con.prepareStatement("INSERT INTO users (name, surname, pin, country, city, stre
             return;
         }
         String pin = info.getPin();
-        if (pin.length() != 9 && pin.length() != 0){
+        if (pin.length() != 11 && pin.length() != 0){
             statusResponse.setProblem("Pin must have 9 cyphers");
             return;
         }
