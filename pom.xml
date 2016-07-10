@@ -144,6 +144,13 @@
     </dependency>
 
     <dependency>
+        <groupId>javax.mail</groupId>
+        <artifactId>mail</artifactId>
+        <version>1.4</version>
+    </dependency>
+
+
+    <dependency>
         <groupId>org.postgresql</groupId>
         <artifactId>postgresql</artifactId>
         <version>9.4.1208</version>
