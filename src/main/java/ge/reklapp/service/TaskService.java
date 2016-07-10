@@ -13,9 +13,12 @@ import java.sql.ResultSet;
 /**
  * Created by Tornike on 10.07.2016.
  */
+@Path("/")
+@Consumes( { MediaType.APPLICATION_JSON})
+@Produces( { MediaType.APPLICATION_JSON})
 public class TaskService {
     @PUT
-    @Path("users")
+    @Path("/users")
     public StatusResponse updateUser(UserInfo info){
         StatusResponse statusResponse = new StatusResponse("");
         checkUserInfo(info, statusResponse);
