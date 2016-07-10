@@ -74,9 +74,9 @@ Returns video link.
         
 ## User Data [/users]
 
-### Add User [PUT]
+### Update/Add User [PUT]
 
-Adds user to server database.
+Updates user in server database, or adds if not present.
 
 + Request (application/json)
 
@@ -93,7 +93,8 @@ Adds user to server database.
             "relationship" : "single",
             "number_of_children" : "0",
             "average_monthly_income" : "10000",
-            "email" : "tornikeman@gmail.com"
+            "email" : "tornikeman@gmail.com",
+            "old_mobile_number" : "555555555"
         }
         
 + Response 200 (application/json)
@@ -113,7 +114,8 @@ Adds user to server database.
             "relationship" : "single",
             "number_of_children" : "0",
             "average_monthly_income" : "10000",
-            "email" : "tornikeman@gmail.com"
+            "email" : "tornikeman@gmail.com",
+            "old_mobile_number" : "555555555"
         }
 
 
@@ -124,32 +126,6 @@ Adds user to server database.
                 "problem": "რამხელა პინია რა არი ეგ?!"
             }
         ]
-        
-        
-### Update User [POST]
-
-Updates user in server database.
-
-+ Request (application/json)
-
-        {
-            "name": "თორნიკე",
-            "surname": "მანძულაშვილი",
-            "pin": "01019080139",
-            "country" : "საქართველო",
-            "city" : "თბილისი",
-            "street_address" : "თემქა კაროჩე",
-            "mobile_number" : "555555555",
-            "sex" : "male",
-            "birthdate" : "19.01.1995",
-            "relationship" : "single",
-            "number_of_children" : "0",
-            "average_monthly_income" : "10000",
-            "email" : "tornikeman@gmail.com"
-            "old_mobile_number" : "555555555"
-        }
-        
-+ Response 200 (application/json)
         
 ## Transfer Money [/users/{mobile_number}/transfer]
 
