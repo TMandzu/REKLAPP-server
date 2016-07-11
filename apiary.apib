@@ -99,6 +99,12 @@ Updates user in server database, or adds if not present.
         }
         
 + Response 200 (application/json)
+
+        [
+            {
+                "problem": "Update Completed."
+            }
+        ]
         
 + Request (application/json)
 
@@ -120,8 +126,7 @@ Updates user in server database, or adds if not present.
             "money" : 1.0
         }
 
-
-+ Response 400 (application/json)
++ Response 200 (application/json)
 
         [
             {
@@ -129,11 +134,39 @@ Updates user in server database, or adds if not present.
             }
         ]
         
-## Transfer Money [/users/{mobile_number}/transfer]
+## Mobile/Bank Transfer [/users/{mobile_number}/transfer/{address}]
 
 ### Transfer money [POST]
 
-Transfers money to your balance.
+Transfers money to your Mobile/Bank balance.
+
++ Parameter
+    + mobile_number (required, string, `555555555`)
+    String returned in Location header field.
+    
+    + address (required, string, `555555555`)
+    String returned in Location header field.
+
++ Request (application/json)
+
+        {
+            "amount" : 1.0
+        }
+        
++ Response 200 (application/json)
+
+        [
+            {
+                "problem": "Transfer Completed."
+            }
+        ]
+
+
+## Self Transfer [/users/{mobile_number}/transfer/self]
+
+### Add money [POST]
+
+Add money to your account balance.
 
 + Parameter
     + mobile_number (required, string, `555555555`)
@@ -142,8 +175,13 @@ Transfers money to your balance.
 + Request (application/json)
 
         {
-            "address" : "555555555",
-            "amound" : "1.0"
+            "amount" : 1000000.0
         }
         
 + Response 200 (application/json)
+
+        [
+            {
+                "problem": "ბევრია. დავიწვებით."
+            }
+        ]
