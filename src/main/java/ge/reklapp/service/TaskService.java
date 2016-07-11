@@ -156,7 +156,7 @@ con.prepareStatement("INSERT INTO users (name, surname, pin, country, city, stre
                 try (PreparedStatement st =
                              con.prepareStatement("SELECT * FROM users WHERE mobile_number=?")) {
 
-                    st.setString(1,"'" + info.getMobile_number() + "'");
+                    st.setString(1,info.getMobile_number());
 
                     int size = st.executeUpdate();
                     if (size > 0){
