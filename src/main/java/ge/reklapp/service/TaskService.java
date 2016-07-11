@@ -25,13 +25,15 @@ public class TaskService {
         StatusResponse statusResponse = new StatusResponse("");
         try (Connection con = DBConnectionProvider.getConnection()) {
             try (PreparedStatement st =
-                         con.prepareStatement("SELECT * FROM users WHERE mobile_number=?")) {
-                st.setString(1,"'" + mobile_number + "'");
+                         con.prepareStatement("SELECT * FROM users WHERE mobile_number=?",
+                                 ResultSet.TYPE_SCROLL_SENSITIVE,
+                                 ResultSet.CONCUR_UPDATABLE)) {
+                st.setString(1,mobile_number);
                 ResultSet res = st.executeQuery();
-                if (res.getFetchSize() == 0){
-                    statusResponse.setProblem("Can not find user.");
+                res.first();
+                if (res.getRow() == 0){
+                    statusResponse.setProblem("Could not find user.");
                 }else{
-                    res.first();
                     double amountNow = res.getDouble("money");
                     double delta = money.getAmount();
                     if (amountNow >= delta){
@@ -48,7 +50,6 @@ public class TaskService {
                                 statusResponse.setProblem("Transfer was NOT completed. Problem occurred.");
                             }
                         }
-
                     }else{
                         statusResponse.setProblem("You have not enough money.");
                     }
