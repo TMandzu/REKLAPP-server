@@ -20,6 +20,43 @@ import java.sql.ResultSet;
 @Produces( { MediaType.APPLICATION_JSON})
 public class TaskService {
     @POST
+    @Path("/users/{mobile_number}/transfer/self")
+    public StatusResponse addMoney(@PathParam("mobile_number") String mobile_number, Money money){
+        StatusResponse statusResponse = new StatusResponse("");
+        try (Connection con = DBConnectionProvider.getConnection()) {
+            try (PreparedStatement st =
+                         con.prepareStatement("SELECT * FROM users WHERE mobile_number=?",
+                                 ResultSet.TYPE_SCROLL_SENSITIVE,
+                                 ResultSet.CONCUR_UPDATABLE)) {
+                st.setString(1,mobile_number);
+                ResultSet res = st.executeQuery();
+                res.first();
+                if (res.getRow() == 0){
+                    statusResponse.setProblem("Could not find you here. Who are you?");
+                }else{
+                    try (PreparedStatement st2 =
+                                 con.prepareStatement("UPDATE users SET money=? WHERE mobile_number=?")) {
+                        st2.setDouble(1, res.getDouble("money") + money.getAmount());
+                        st2.setString(2, mobile_number);
+                        int size = st2.executeUpdate();
+                        if (size > 0){
+                            statusResponse.setProblem("Money Addition Completed.");
+                        }else{
+                            statusResponse.setProblem("Money Addition was NOT completed. Problem occurred.");
+                        }
+                    }
+                }
+            }
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            statusResponse.setProblem("Money Addition was NOT completed. Problem occurred.");
+        }
+        return statusResponse;
+    }
+
+
+    @POST
     @Path("/users/{mobile_number}/transfer/{address}")
     public StatusResponse transferMoney(@PathParam("mobile_number") String mobile_number, @PathParam("address") String address, Money money){
         StatusResponse statusResponse = new StatusResponse("");
