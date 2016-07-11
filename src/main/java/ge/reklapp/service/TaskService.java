@@ -26,7 +26,7 @@ public class TaskService {
         try (Connection con = DBConnectionProvider.getConnection()) {
             try (PreparedStatement st =
                          con.prepareStatement("SELECT * FROM users WHERE mobile_number=?")) {
-                st.setString(1, mobile_number);
+                st.setString(1,"'" + mobile_number + "'");
                 ResultSet res = st.executeQuery();
                 if (res.getFetchSize() == 0){
                     statusResponse.setProblem("Can not find user.");
@@ -156,7 +156,7 @@ con.prepareStatement("INSERT INTO users (name, surname, pin, country, city, stre
                 try (PreparedStatement st =
                              con.prepareStatement("SELECT * FROM users WHERE mobile_number=?")) {
 
-                    st.setString(1, info.getMobile_number());
+                    st.setString(1,"'" + info.getMobile_number() + "'");
 
                     int size = st.executeUpdate();
                     if (size > 0){
