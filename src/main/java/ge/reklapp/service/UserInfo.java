@@ -46,10 +46,10 @@ public class UserInfo {
     private String relationship;
 
     @XmlElement(name = "number_of_children")
-    private String number_of_children;
+    private int number_of_children;
 
     @XmlElement(name = "average_monthly_income")
-    private String average_monthly_income;
+    private int average_monthly_income;
 
     @XmlElement(name = "email")
     private String email;
@@ -165,19 +165,19 @@ public class UserInfo {
         this.relationship = relationship;
     }
 
-    public String getNumber_of_children() {
+    public int getNumber_of_children() {
         return number_of_children;
     }
 
-    public void setNumber_of_children(String number_of_children) {
+    public void setNumber_of_children(int number_of_children) {
         this.number_of_children = number_of_children;
     }
 
-    public String getAverage_monthly_income() {
+    public int getAverage_monthly_income() {
         return average_monthly_income;
     }
 
-    public void setAverage_monthly_income(String average_monthly_income) {
+    public void setAverage_monthly_income(int average_monthly_income) {
         this.average_monthly_income = average_monthly_income;
     }
 

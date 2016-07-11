@@ -6,6 +6,7 @@ import javax.mail.internet.AddressException;
 import javax.mail.internet.InternetAddress;
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
+import java.math.BigDecimal;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -32,7 +33,7 @@ public class TaskService {
 
                 st.setString(1, info.getOld_mobile_number());
 
-                st.executeQuery();
+                st.executeUpdate();
             }
 
             try (PreparedStatement st =
@@ -49,13 +50,13 @@ con.prepareStatement("INSERT INTO users (name, surname, pin, country, city, stre
                 st.setString(8, info.getSex());
                 st.setDate(9, info.getBirthdate());
                 st.setString(10, info.getRelationship());
-                st.setString(11, info.getNumber_of_children());
-                st.setString(12, info.getAverage_monthly_income());
+                st.setInt(11, info.getNumber_of_children());
+                st.setInt(12, info.getAverage_monthly_income());
                 st.setString(13, info.getEmail());
-                st.setDouble(14, info.getMoney());
+                st.setDouble(14, Double.valueOf(info.getMoney()));
 
-                ResultSet resultSet = st.executeQuery();
-                if (resultSet.getFetchSize() > 0){
+                int size = st.executeUpdate();
+                if (size > 0){
                     statusResponse.setProblem("Update completed.");
                 }else{
                     statusResponse.setProblem("Something went wrong. Look your information carefully.");
@@ -109,8 +110,8 @@ con.prepareStatement("INSERT INTO users (name, surname, pin, country, city, stre
 
                     st.setString(1, info.getMobile_number());
 
-                    ResultSet resultSet = st.executeQuery();
-                    if (resultSet.getFetchSize() > 0){
+                    int size = st.executeUpdate();
+                    if (size > 0){
                         statusResponse.setProblem("This number is already taken.");
                     }
 
