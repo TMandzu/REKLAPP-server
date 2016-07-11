@@ -6,6 +6,7 @@ import javax.mail.internet.AddressException;
 import javax.mail.internet.InternetAddress;
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response;
 import java.math.BigDecimal;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -18,6 +19,53 @@ import java.sql.ResultSet;
 @Consumes( { MediaType.APPLICATION_JSON})
 @Produces( { MediaType.APPLICATION_JSON})
 public class TaskService {
+    @POST
+    @Path("/users/{mobile_number}/transfer/{address}")
+    public StatusResponse transferMoney(@PathParam("mobile_number") String mobile_number, @PathParam("address") String address, Money money){
+        StatusResponse statusResponse = new StatusResponse("");
+        try (Connection con = DBConnectionProvider.getConnection()) {
+            try (PreparedStatement st =
+                         con.prepareStatement("SELECT * FROM users WHERE mobile_number=?")) {
+                st.setString(1, mobile_number);
+                ResultSet res = st.executeQuery();
+                if (res.getFetchSize() == 0){
+                    statusResponse.setProblem("Can not find user.");
+                }else{
+                    res.first();
+                    double amountNow = res.getDouble("money");
+                    double delta = money.getAmount();
+                    if (amountNow >= delta){
+                        double newAmount = amountNow - delta;
+                        try (PreparedStatement st2 =
+                                     con.prepareStatement("UPDATE users SET money=? WHERE mobile_number=?")) {
+                            st2.setDouble(1, newAmount);
+                            st2.setString(2, mobile_number);
+                            int size = st2.executeUpdate();
+                            if (size > 0){
+                                statusResponse.setProblem("Transfer Completed.");
+                                transferToAddress(delta, address);
+                            }else{
+                                statusResponse.setProblem("Transfer was NOT completed. Problem occurred.");
+                            }
+                        }
+
+                    }else{
+                        statusResponse.setProblem("You have not enough money.");
+                    }
+                }
+            }
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            statusResponse.setProblem("Transfer was NOT completed. Problem occurred.");
+        }
+        return statusResponse;
+    }
+
+    private void transferToAddress(double amount, String address){
+        // TODO
+    }
+
     @PUT
     @Path("/users")
     public StatusResponse updateUser(UserInfo info){
