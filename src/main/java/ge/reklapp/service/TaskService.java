@@ -19,6 +19,31 @@ import java.sql.ResultSet;
 @Consumes( { MediaType.APPLICATION_JSON})
 @Produces( { MediaType.APPLICATION_JSON})
 public class TaskService {
+    @GET
+    @Path("/users/{mobile_number}/money")
+    public Money getMoney(@PathParam("mobile_number") String mobile_number){
+        Money money = new Money();
+        try (Connection con = DBConnectionProvider.getConnection()) {
+            try (PreparedStatement st =
+                         con.prepareStatement("SELECT * FROM users WHERE mobile_number=?",
+                                 ResultSet.TYPE_SCROLL_SENSITIVE,
+                                 ResultSet.CONCUR_UPDATABLE)) {
+                st.setString(1,mobile_number);
+                ResultSet res = st.executeQuery();
+                res.first();
+                if (res.getRow() == 0){
+                    money.setAmount(-1);
+                }else{
+                    money.setAmount(res.getDouble("money"));
+                }
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            money.setAmount(-1);
+        }
+        return money;
+    }
+
     @POST
     @Path("/users/{mobile_number}/transfer/self")
     public StatusResponse addMoney(@PathParam("mobile_number") String mobile_number, Money money){
@@ -220,5 +245,7 @@ con.prepareStatement("INSERT INTO users (name, surname, pin, country, city, stre
         }
         return result;
     }
+
+
 
 }
