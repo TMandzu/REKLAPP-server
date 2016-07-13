@@ -45,43 +45,6 @@ public class TaskService {
     }
 
     @POST
-    @Path("/users/{mobile_number}/transfer/self")
-    public StatusResponse addMoney(@PathParam("mobile_number") String mobile_number, Money money){
-        StatusResponse statusResponse = new StatusResponse("");
-        try (Connection con = DBConnectionProvider.getConnection()) {
-            try (PreparedStatement st =
-                         con.prepareStatement("SELECT * FROM users WHERE mobile_number=?",
-                                 ResultSet.TYPE_SCROLL_SENSITIVE,
-                                 ResultSet.CONCUR_UPDATABLE)) {
-                st.setString(1,mobile_number);
-                ResultSet res = st.executeQuery();
-                res.first();
-                if (res.getRow() == 0){
-                    statusResponse.setProblem("Could not find you here. Who are you?");
-                }else{
-                    try (PreparedStatement st2 =
-                                 con.prepareStatement("UPDATE users SET money=? WHERE mobile_number=?")) {
-                        st2.setDouble(1, res.getDouble("money") + money.getAmount());
-                        st2.setString(2, mobile_number);
-                        int size = st2.executeUpdate();
-                        if (size > 0){
-                            statusResponse.setProblem("Money Addition Completed.");
-                        }else{
-                            statusResponse.setProblem("Money Addition was NOT completed. Problem occurred.");
-                        }
-                    }
-                }
-            }
-
-        } catch (Exception e) {
-            e.printStackTrace();
-            statusResponse.setProblem("Money Addition was NOT completed. Problem occurred.");
-        }
-        return statusResponse;
-    }
-
-
-    @POST
     @Path("/users/{mobile_number}/transfer/{address}")
     public StatusResponse transferMoney(@PathParam("mobile_number") String mobile_number, @PathParam("address") String address, Money money){
         StatusResponse statusResponse = new StatusResponse("");
@@ -98,16 +61,17 @@ public class TaskService {
                 }else{
                     double amountNow = res.getDouble("money");
                     double delta = money.getAmount();
-                    if (amountNow >= delta){
+                    if (address.equals("self"))
+                        delta = -delta;
+                    if (amountNow >= delta && transferToAddress(delta, address)){
                         double newAmount = amountNow - delta;
                         try (PreparedStatement st2 =
-                                     con.prepareStatement("UPDATE users SET money=? WHERE mobile_number=?")) {
+                                     con.prepareStatement("UPDATE users SET money=? WHERE mobile_number=?")) { // TODO es ro ver gamovides faqtiurad fuls vchuqnit
                             st2.setDouble(1, newAmount);
                             st2.setString(2, mobile_number);
                             int size = st2.executeUpdate();
                             if (size > 0){
                                 statusResponse.setProblem("Transfer Completed.");
-                                transferToAddress(delta, address);
                             }else{
                                 statusResponse.setProblem("Transfer was NOT completed. Problem occurred.");
                             }
@@ -125,8 +89,11 @@ public class TaskService {
         return statusResponse;
     }
 
-    private void transferToAddress(double amount, String address){
-        // TODO
+    private boolean transferToAddress(double amount, String address){
+        // TODO fulis gadaricxva unda angarishze
+        if (address.equals("self"))
+            return true;
+        return true;
     }
 
     @PUT
