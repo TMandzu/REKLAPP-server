@@ -45,6 +45,9 @@ public class UserInfo {
     @XmlElement(name = "relationship")
     private String relationship;
 
+    @XmlElement(name = "password")
+    private String password;
+
     @XmlElement(name = "number_of_children")
     private int number_of_children;
 
@@ -83,6 +86,14 @@ public class UserInfo {
             return false;
         UserInfo other = (UserInfo) obj;
         return this.mobile_number.equals(other.getMobile_number());
+    }
+
+    public String getPassword() {
+        return password;
+    }
+
+    public void setPassword(String password) {
+        this.password = password;
     }
 
     public String getName() {

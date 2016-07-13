@@ -115,8 +115,8 @@ public class TaskService {
             }
 
             try (PreparedStatement st =
-con.prepareStatement("INSERT INTO users (name, surname, pin, country, city, street_address, mobile_number, sex, birthdate, relationship, number_of_children, average_monthly_income, email, money)" +
-                                 "VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?)")) {
+con.prepareStatement("INSERT INTO users (name, surname, pin, country, city, street_address, mobile_number, sex, birthdate, relationship, number_of_children, average_monthly_income, email, money, password)" +
+                                 "VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)")) {
 
                 st.setString(1, info.getName());
                 st.setString(2, info.getSurname());
@@ -132,6 +132,7 @@ con.prepareStatement("INSERT INTO users (name, surname, pin, country, city, stre
                 st.setInt(12, info.getAverage_monthly_income());
                 st.setString(13, info.getEmail());
                 st.setDouble(14, Double.valueOf(info.getMoney()));
+                st.setString(15, info.getPassword());
 
                 int size = st.executeUpdate();
                 if (size > 0){
@@ -160,6 +161,12 @@ con.prepareStatement("INSERT INTO users (name, surname, pin, country, city, stre
             statusResponse.setProblem("Enter surname");
             return;
         }
+
+        if (info.getPassword().length() < 6 || info.getPassword().length() > 20){
+            statusResponse.setProblem("Password length must be between 6-20");
+            return;
+        }
+
         String pin = info.getPin();
         if (pin.length() != 11 && pin.length() != 0){
             statusResponse.setProblem("Pin must have 9 cyphers");
