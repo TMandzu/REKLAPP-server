@@ -26,11 +26,9 @@ Returns money user have on balance in GEL.
     
 + Response 200 (application/json)
 
-        [
-            {
-                "money": 1.0
-            }
-        ]
+        {
+            "money": 1.0
+        }
 
 ## Random Advertisment [/users/{mobile_number}/advertisments/random]
 
@@ -45,14 +43,12 @@ Returns video link.
 
 + Response 200 (application/json)
 
-        [
-            {
-                "link": "https://ia600201.us.archive.org/22/items/ksnn_compilation_master_the_internet/ksnn_compilation_master_the_internet_512kb.mp4"
-                "product": "რძის ნაწარმი"
-                "company": "სანტე"
-                "price": 1.15
-            }
-        ]
+        {
+            "link": "https://ia600201.us.archive.org/22/items/ksnn_compilation_master_the_internet/ksnn_compilation_master_the_internet_512kb.mp4"
+            "product": "რძის ნაწარმი"
+            "company": "სანტე"
+            "price": 1.15
+        }
         
         
 ## Custom Advertisment [/users/{mobile_number}/advertisments/custom/{custom_advertisment_string}]
@@ -86,11 +82,9 @@ Updates user in server database, or adds if not present.
         
 + Response 200 (application/json)
 
-        [
-            {
-                "problem": "Update Completed."
-            }
-        ]
+        {
+            "problem": "Update Completed."
+        }
         
 + Request (application/json)
 
@@ -114,11 +108,9 @@ Updates user in server database, or adds if not present.
 
 + Response 200 (application/json)
 
-        [
-            {
-                "problem": "რამხელა პინია რა არი ეგ?!"
-            }
-        ]
+        {
+            "problem": "რამხელა პინია რა არი ეგ?!"
+        }
         
 ## Mobile/Bank Transfer [/users/{mobile_number}/transfer/{address}]
 
@@ -141,8 +133,6 @@ Transfers money to your Mobile/Bank balance.
         
 + Response 200 (application/json)
 
-        [
-            {
-                "problem": "Transfer Completed."
-            }
-        ]
+        {
+            "problem": "Transfer Completed."
+        }
