@@ -66,7 +66,9 @@ public class TaskService {
                     if (amountNow >= delta && transferToAddress(delta, address)){
                         double newAmount = amountNow - delta;
                         try (PreparedStatement st2 =
-                                     con.prepareStatement("UPDATE users SET money=? WHERE mobile_number=?")) { // TODO es ro ver gamovides faqtiurad fuls vchuqnit
+                                     con.prepareStatement("UPDATE users SET money=? WHERE mobile_number=?",
+                                             ResultSet.TYPE_SCROLL_SENSITIVE,
+                                             ResultSet.CONCUR_UPDATABLE)) { // TODO es ro ver gamovides faqtiurad fuls vchuqnit
                             st2.setDouble(1, newAmount);
                             st2.setString(2, mobile_number);
                             int size = st2.executeUpdate();
@@ -106,41 +108,81 @@ public class TaskService {
             return statusResponse;
 
         try (Connection con = DBConnectionProvider.getConnection()) {
-            try (PreparedStatement st =
-                         con.prepareStatement("DELETE FROM users WHERE mobile_number=?")) {
+            try (PreparedStatement st_start =
+                         con.prepareStatement("SELECT * FROM users WHERE mobile_number=?",
+                                 ResultSet.TYPE_SCROLL_SENSITIVE,
+                                 ResultSet.CONCUR_UPDATABLE)) {
 
-                st.setString(1, info.getOld_mobile_number());
+                st_start.setString(1, info.getOld_mobile_number());
 
-                st.executeUpdate();
-            }
+                ResultSet res = st_start.executeQuery();
+                res.first();
 
-            try (PreparedStatement st =
-con.prepareStatement("INSERT INTO users (name, surname, pin, country, city, street_address, mobile_number, sex, birthdate, relationship, number_of_children, average_monthly_income, email, money, password)" +
-                                 "VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)")) {
+                if (res.getRow() == 0) {
+                    // create
+                    try (PreparedStatement st =
+                                 con.prepareStatement("INSERT INTO users (name, surname, pin, country, city, street_address, mobile_number, sex, birthdate, relationship, number_of_children, average_monthly_income, email, money, password)" +
+                                         "VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)",
+                                         ResultSet.TYPE_SCROLL_SENSITIVE,
+                                         ResultSet.CONCUR_UPDATABLE)) {
 
-                st.setString(1, info.getName());
-                st.setString(2, info.getSurname());
-                st.setString(3, info.getPin());
-                st.setString(4, info.getCountry());
-                st.setString(5, info.getCity());
-                st.setString(6, info.getStreet_address());
-                st.setString(7, info.getMobile_number());
-                st.setString(8, info.getSex());
-                st.setDate(9, info.getBirthdate());
-                st.setString(10, info.getRelationship());
-                st.setInt(11, info.getNumber_of_children());
-                st.setInt(12, info.getAverage_monthly_income());
-                st.setString(13, info.getEmail());
-                st.setDouble(14, Double.valueOf(info.getMoney()));
-                st.setString(15, info.getPassword());
+                        st.setString(1, info.getName());
+                        st.setString(2, info.getSurname());
+                        st.setString(3, info.getPin());
+                        st.setString(4, info.getCountry());
+                        st.setString(5, info.getCity());
+                        st.setString(6, info.getStreet_address());
+                        st.setString(7, info.getMobile_number());
+                        st.setString(8, info.getSex());
+                        st.setDate(9, info.getBirthdate());
+                        st.setString(10, info.getRelationship());
+                        st.setInt(11, info.getNumber_of_children());
+                        st.setInt(12, info.getAverage_monthly_income());
+                        st.setString(13, info.getEmail());
+                        st.setDouble(14, info.getMoney());
+                        st.setString(15, info.getPassword());
 
-                int size = st.executeUpdate();
-                if (size > 0){
-                    statusResponse.setProblem("Update completed.");
-                }else{
-                    statusResponse.setProblem("Something went wrong. Look your information carefully.");
+                        int size = st.executeUpdate();
+                        if (size > 0) {
+                            statusResponse.setProblem("Update completed.");
+                        } else {
+                            statusResponse.setProblem("Something went wrong. Look your information carefully.");
+                        }
+
+                    }
+                } else {
+                    // update
+                    try (PreparedStatement st =
+                                 con.prepareStatement("UPDATE users SET name=?,surname=?,pin=?,country=?,city=?,street_address=?,mobile_number=?,sex=?,birthdate=?,relationship=?,number_of_children=?,average_monthly_income=?,email=?,money=?,password=?  WHERE mobile_number=?",
+                                         ResultSet.TYPE_SCROLL_SENSITIVE,
+                                         ResultSet.CONCUR_UPDATABLE)) {
+
+                        st.setString(1, info.getName());
+                        st.setString(2, info.getSurname());
+                        st.setString(3, info.getPin());
+                        st.setString(4, info.getCountry());
+                        st.setString(5, info.getCity());
+                        st.setString(6, info.getStreet_address());
+                        st.setString(7, info.getMobile_number());
+                        st.setString(8, info.getSex());
+                        st.setDate(9, info.getBirthdate());
+                        st.setString(10, info.getRelationship());
+                        st.setInt(11, info.getNumber_of_children());
+                        st.setInt(12, info.getAverage_monthly_income());
+                        st.setString(13, info.getEmail());
+                        st.setDouble(14, info.getMoney());
+                        st.setString(15, info.getPassword());
+                        st.setString(16, info.getOld_mobile_number());
+
+                        int size = st.executeUpdate();
+                        if (size > 0) {
+                            statusResponse.setProblem("Update completed.");
+                        } else {
+                            statusResponse.setProblem("Something went wrong. Look your information carefully.");
+                        }
+
+                    }
                 }
-
             }
 
         } catch (Exception e) {
@@ -191,12 +233,15 @@ con.prepareStatement("INSERT INTO users (name, surname, pin, country, city, stre
         if (!info.getOld_mobile_number().equals(info.getMobile_number())){
             try (Connection con = DBConnectionProvider.getConnection()) {
                 try (PreparedStatement st =
-                             con.prepareStatement("SELECT * FROM users WHERE mobile_number=?")) {
+                             con.prepareStatement("SELECT * FROM users WHERE mobile_number=?",
+                                     ResultSet.TYPE_SCROLL_SENSITIVE,
+                                     ResultSet.CONCUR_UPDATABLE)) {
 
                     st.setString(1,info.getMobile_number());
 
-                    int size = st.executeUpdate();
-                    if (size > 0){
+                    ResultSet res = st.executeQuery();
+                    res.first();
+                    if (res.getRow() > 0){
                         statusResponse.setProblem("This number is already taken.");
                     }
 
