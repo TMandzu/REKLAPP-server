@@ -9,7 +9,7 @@ import javax.xml.bind.annotation.XmlRootElement;
  * Created by Tornike on 11.07.2016.
  */
 @XmlRootElement
-public class Money {
+public class MoneyInfo {
     @XmlElement(name = "amount", required = true)
     private double amount;
 
@@ -21,9 +21,9 @@ public class Money {
         this.amount = amount;
     }
 
-    public Money(){}
+    public MoneyInfo(){}
 
-    public Money(double amount) {
+    public MoneyInfo(double amount) {
         this.amount = amount;
     }
 }

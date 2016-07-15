@@ -6,8 +6,6 @@ import javax.mail.internet.AddressException;
 import javax.mail.internet.InternetAddress;
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.Response;
-import java.math.BigDecimal;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -19,10 +17,84 @@ import java.sql.ResultSet;
 @Consumes( { MediaType.APPLICATION_JSON})
 @Produces( { MediaType.APPLICATION_JSON})
 public class TaskService {
+    // TODO periodulad pairs gasuftaveba nagvisgan
+    // TODO aucileblad unda movides aq pasuxi ukan. albat timeri gvinda clientshi.
+    @GET // TODO rame synchronized cvladi qvinda bazastan paraleluri kavshiri ro ar iyos, gasarkvevia baza ramdenadaa sinchronized
+    @Path("/users/{mobile_number}/advertisments/random")
+    public AdInfo getRandomAd(@PathParam("mobile_number") String mobile_number){
+        AdInfo adInfo = new AdInfo();
+        try (Connection con = DBConnectionProvider.getConnection()) {
+            try (PreparedStatement st =
+                         con.prepareStatement("SELECT user_id FROM users WHERE mobile_number=?",
+                                 ResultSet.TYPE_SCROLL_SENSITIVE,
+                                 ResultSet.CONCUR_UPDATABLE)) {
+                st.setString(1,mobile_number);
+                ResultSet res = st.executeQuery();
+                res.first();
+                if (res.getRow() == 0){
+                    adInfo.setStatus("Could not find user.");
+                }else{
+                    int user_id = res.getInt("user_id");
+                    try (PreparedStatement st2 =
+                                 con.prepareStatement("SELECT * FROM pairs WHERE user_id=? ORDER BY random() LIMIT 1",
+                                         ResultSet.TYPE_SCROLL_SENSITIVE,
+                                         ResultSet.CONCUR_UPDATABLE)) {
+                        st2.setInt(1, user_id);
+                        ResultSet res2 = st2.executeQuery();
+                        res2.first();
+                        if (res2.getRow() == 0){
+                            adInfo.setStatus("There are no ads for you now.");
+                        }else{
+                            int ad_id = res2.getInt("ad_id");
+                            int pair_id = res2.getInt("pair_id");
+                            try (PreparedStatement st3 =
+                                         con.prepareStatement("SELECT * FROM ads WHERE ad_id=? and view_left > 0",
+                                                 ResultSet.TYPE_SCROLL_SENSITIVE,
+                                                 ResultSet.CONCUR_UPDATABLE)) {
+                                st3.setInt(1, ad_id);
+                                ResultSet res3 = st3.executeQuery();
+                                res3.first();
+                                if (res3.getRow() == 0){
+                                    adInfo.setStatus("There are no ads for you now.");
+                                }else{
+                                    int view_left = res3.getInt("view_left") - 1;
+                                    try (PreparedStatement st4 =
+                                                 con.prepareStatement("UPDATE ads SET view_left=? WHERE ad_id=?",
+                                                         ResultSet.TYPE_SCROLL_SENSITIVE,
+                                                         ResultSet.CONCUR_UPDATABLE)){
+                                        st4.setInt(1, view_left);
+                                        st4.setInt(2, ad_id);
+                                        int size = st4.executeUpdate();
+                                        if (size > 0){
+                                            adInfo.setStatus("Request completed.");
+                                            adInfo.setDescription(res3.getString("description"));
+                                            adInfo.setCompany(res3.getString("company"));
+                                            adInfo.setLink(res3.getString("link"));
+                                            adInfo.setPair_id(pair_id);
+                                            adInfo.setProduct(res3.getString("product"));
+                                            adInfo.setView_gain(res3.getDouble("view_gain"));
+                                        }else{
+                                            adInfo.setStatus("problem occurred.");
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            adInfo.setStatus("Problem occurred.");
+        }
+        return adInfo;
+    }
+
+
     @GET
     @Path("/users/{mobile_number}/money")
-    public Money getMoney(@PathParam("mobile_number") String mobile_number){
-        Money money = new Money();
+    public MoneyInfo getMoney(@PathParam("mobile_number") String mobile_number){
+        MoneyInfo moneyInfo = new MoneyInfo();
         try (Connection con = DBConnectionProvider.getConnection()) {
             try (PreparedStatement st =
                          con.prepareStatement("SELECT * FROM users WHERE mobile_number=?",
@@ -32,21 +104,21 @@ public class TaskService {
                 ResultSet res = st.executeQuery();
                 res.first();
                 if (res.getRow() == 0){
-                    money.setAmount(-1);
+                    moneyInfo.setAmount(-1);
                 }else{
-                    money.setAmount(res.getDouble("money"));
+                    moneyInfo.setAmount(res.getDouble("money"));
                 }
             }
         } catch (Exception e) {
             e.printStackTrace();
-            money.setAmount(-1);
+            moneyInfo.setAmount(-1);
         }
-        return money;
+        return moneyInfo;
     }
 
     @POST
     @Path("/users/{mobile_number}/transfer/{address}")
-    public StatusResponse transferMoney(@PathParam("mobile_number") String mobile_number, @PathParam("address") String address, Money money){
+    public StatusResponse transferMoney(@PathParam("mobile_number") String mobile_number, @PathParam("address") String address, MoneyInfo moneyInfo){
         StatusResponse statusResponse = new StatusResponse("");
         try (Connection con = DBConnectionProvider.getConnection()) {
             try (PreparedStatement st =
@@ -60,7 +132,7 @@ public class TaskService {
                     statusResponse.setProblem("Could not find user.");
                 }else{
                     double amountNow = res.getDouble("money");
-                    double delta = money.getAmount();
+                    double delta = moneyInfo.getAmount();
                     if (address.equals("self"))
                         delta = -delta;
                     if (amountNow >= delta && transferToAddress(delta, address)){
