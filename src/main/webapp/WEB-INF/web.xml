@@ -11,6 +11,9 @@
         </init-param>
         <load-on-startup>1</load-on-startup>
     </servlet>
+    <listener>
+        <listener-class>core.Listener</listener-class>
+    </listener>
     <servlet-mapping>
         <servlet-name>REKLAPP-server</servlet-name>
         <url-pattern>/webapi/*</url-pattern>
