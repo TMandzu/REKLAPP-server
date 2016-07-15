@@ -138,6 +138,12 @@
     </dependency>
 
     <dependency>
+        <groupId>com.coinbase.api</groupId>
+        <artifactId>coinbase-java</artifactId>
+        <version>1.10.0</version>
+    </dependency>
+
+    <dependency>
         <groupId>org.apache.commons</groupId>
         <artifactId>commons-dbcp2</artifactId>
         <version>2.0</version>
@@ -161,6 +167,26 @@
         <artifactId>junit</artifactId>
         <version>4.11</version>
         <scope>test</scope>
+    </dependency>
+
+    <dependency>
+        <groupId>javax.servlet</groupId>
+        <artifactId>javax.servlet-api</artifactId>
+        <version>3.0.1</version>
+        <scope>provided</scope>
+    </dependency>
+
+    <dependency>
+        <groupId>org.apache.tomcat</groupId>
+        <artifactId>tomcat-servlet-api</artifactId>
+        <version>7.0.21</version>
+        <scope>provided</scope>
+    </dependency>
+
+    <dependency>
+        <groupId>org.joda</groupId>
+        <artifactId>joda-money</artifactId>
+        <version>0.11</version>
     </dependency>
 
     <dependency>

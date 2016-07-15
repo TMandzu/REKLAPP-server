@@ -1,6 +1,10 @@
 package ge.reklapp.service;
 
+import com.coinbase.api.Coinbase;
+import com.coinbase.api.CoinbaseBuilder;
+import com.coinbase.api.entity.Transaction;
 import ge.reklapp.db.DBConnectionProvider;
+import org.joda.money.Money;
 
 import javax.mail.internet.AddressException;
 import javax.mail.internet.InternetAddress;
@@ -151,7 +155,7 @@ public class TaskService {
                             }
                         }
                     }else{
-                        statusResponse.setProblem("You have not enough money.");
+                        statusResponse.setProblem("Transfer could not complete.");
                     }
                 }
             }
@@ -164,9 +168,21 @@ public class TaskService {
     }
 
     private boolean transferToAddress(double amount, String address){
-        // TODO fulis gadaricxva unda angarishze
         if (address.equals("self"))
             return true;
+        Coinbase cb = new CoinbaseBuilder()
+                .withApiKey("Wr716n19WKnpNbGK", "clWydFSISmZdHs9RjBAuPfPYDHkqGV0f")
+                .build();
+        try {
+            Transaction t = new Transaction();
+            t.setTo(address);
+            t.setAmount(Money.parse("BTC " + 0.000000001)); // TODO amount gadasaweria GEL TO BTC
+            t.setNotes("Thanks for watching our ads!");
+            cb.sendMoney(t);
+        } catch (Exception e){
+            e.printStackTrace();
+            return false;
+        }
         return true;
     }
 
