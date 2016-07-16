@@ -21,6 +21,50 @@ import java.sql.ResultSet;
 @Consumes( { MediaType.APPLICATION_JSON})
 @Produces( { MediaType.APPLICATION_JSON})
 public class TaskService {
+    @GET
+    @Path("/users")
+    public UserInfo getUser(LoginInformation loginInformation){
+        UserInfo userInfo = new UserInfo();
+        try (Connection con = DBConnectionProvider.getConnection()) {
+            try (PreparedStatement st =
+                         con.prepareStatement("SELECT * FROM users WHERE mobile_number=? and password=?",
+                                 ResultSet.TYPE_SCROLL_SENSITIVE,
+                                 ResultSet.CONCUR_UPDATABLE)) {
+
+
+                st.setString(1, loginInformation.getMobile_number());
+                st.setString(2, loginInformation.getPassword());
+
+                ResultSet res = st.executeQuery();
+                res.first();
+
+                if (res.getRow() > 0){
+                    userInfo.setName(res.getString("name"));
+                    userInfo.setSurname(res.getString("surname"));
+                    userInfo.setPin(res.getString("pin"));
+                    userInfo.setCountry(res.getString("country"));
+                    userInfo.setCity(res.getString("city"));
+                    userInfo.setStreet_address(res.getString("street_address"));
+                    userInfo.setMobile_number(res.getString("mobile_number"));
+                    userInfo.setBirthdate(res.getDate("birthdate"));
+                    userInfo.setRelationship(res.getString("relationship"));
+                    userInfo.setPassword(res.getString("password"));
+                    userInfo.setNumber_of_children(res.getInt("number_of_children"));
+                    userInfo.setAverage_monthly_income(res.getInt("average_monthly_income"));
+                    userInfo.setEmail(res.getString("email"));
+                    userInfo.setOld_mobile_number(res.getString("old_mobile_number"));
+                    userInfo.setMoney(res.getDouble("money"));
+                    userInfo.setSex(res.getString("sex"));
+                }
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            userInfo = new UserInfo();
+        }
+        return userInfo;
+    }
+
+
     // TODO periodulad pairs gasuftaveba nagvisgan
     // TODO aucileblad unda movides aq pasuxi ukan. albat timeri gvinda clientshi.
     @GET // TODO rame synchronized cvladi qvinda bazastan paraleluri kavshiri ro ar iyos, gasarkvevia baza ramdenadaa sinchronized

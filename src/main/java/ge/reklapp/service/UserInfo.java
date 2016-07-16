@@ -4,6 +4,7 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlSchemaType;
 import java.sql.Date;
+import java.util.Calendar;
 
 /**
  * Created by Tornike on 10.07.2016.
@@ -12,6 +13,36 @@ import java.sql.Date;
 public class UserInfo {
 
     public UserInfo() {
+        this.name = "";
+        this.surname = "";
+        this.pin = "";
+        this.country = "";
+        this.city = "";
+        this.street_address = "";
+        this.mobile_number = "";
+        Calendar cal = Calendar.getInstance();
+
+        // set Date portion to January 1, 1970
+        cal.set( cal.YEAR, 1970 );
+        cal.set( cal.MONTH, cal.JANUARY );
+        cal.set( cal.DATE, 1 );
+
+        cal.set( cal.HOUR_OF_DAY, 0 );
+        cal.set( cal.MINUTE, 0 );
+        cal.set( cal.SECOND, 0 );
+        cal.set( cal.MILLISECOND, 0 );
+
+        java.sql.Date jsqlD =
+                new java.sql.Date( cal.getTime().getTime() );
+        this.birthdate = jsqlD;
+        this.relationship = "";
+        this.password = "";
+        this.number_of_children = 0;
+        this.average_monthly_income = 0;
+        this.email = "";
+        this.old_mobile_number = "";
+        this.money = 0;
+        this.sex = "";
     }
 
     @XmlElement(name = "name")
