@@ -22,8 +22,8 @@ import java.sql.ResultSet;
 @Produces( { MediaType.APPLICATION_JSON})
 public class TaskService {
     @GET
-    @Path("/users")
-    public UserInfo getUser(LoginInformation loginInformation){
+    @Path("/users/{mobile_number}/{password}")
+    public UserInfo getUser(@PathParam("mobile_number") String mobile_number, @PathParam("password") String password){
         UserInfo userInfo = new UserInfo();
         try (Connection con = DBConnectionProvider.getConnection()) {
             try (PreparedStatement st =
@@ -31,9 +31,8 @@ public class TaskService {
                                  ResultSet.TYPE_SCROLL_SENSITIVE,
                                  ResultSet.CONCUR_UPDATABLE)) {
 
-
-                st.setString(1, loginInformation.getMobile_number());
-                st.setString(2, loginInformation.getPassword());
+                st.setString(1, mobile_number);
+                st.setString(2, password);
 
                 ResultSet res = st.executeQuery();
                 res.first();
@@ -52,7 +51,7 @@ public class TaskService {
                     userInfo.setNumber_of_children(res.getInt("number_of_children"));
                     userInfo.setAverage_monthly_income(res.getInt("average_monthly_income"));
                     userInfo.setEmail(res.getString("email"));
-                    userInfo.setOld_mobile_number(res.getString("old_mobile_number"));
+                    userInfo.setOld_mobile_number("");
                     userInfo.setMoney(res.getDouble("money"));
                     userInfo.setSex(res.getString("sex"));
                 }
