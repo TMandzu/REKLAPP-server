@@ -54,10 +54,66 @@ Returns video link.
         }
         
         
-## Custom Advertisment [/users/{mobile_number}/advertisments/custom/{custom_advertisment_string}]
         
+## User Data GET [/users/{mobile_number}/{password}]
+
+### Get User [GET]
+
+Returns user for requested mobile number and password.
+
++ Parameter
+    + mobile_number (required, string, `555555555`)
+    String returned in Location header field.
+    + password (required, string, `პაროლი`)
+    String returned in Location header field.
+
++ Request (application/json)
+
++ Response 200 (application/json)
+
+        {
+            "name": "თორნიკე",
+            "surname": "მანძულაშვილი",
+            "pin": "01019080139",
+            "country" : "საქართველო",
+            "city" : "თბილისი",
+            "password" : "პაროლი",
+            "street_address" : "თემქა კაროჩე",
+            "mobile_number" : "555555555",
+            "sex" : "male",
+            "birthdate" : "1995-01-19",
+            "relationship" : "single",
+            "number_of_children" : 0,
+            "average_monthly_income" : 10000,
+            "email" : "tornikeman@gmail.com",
+            "old_mobile_number" : "",
+            "money" : 1.0
+        }
         
-## User Data [/users]
++ Request (application/json)
+        
++ Response 200 (application/json)
+
+        {
+            "name": "",
+            "surname": "",
+            "pin": "",
+            "country" : "",
+            "city" : "",
+            "password" : "",
+            "street_address" : "",
+            "mobile_number" : "",
+            "sex" : "",
+            "birthdate" : "",
+            "relationship" : "",
+            "number_of_children" : 0,
+            "average_monthly_income" : 10000,
+            "email" : "",
+            "old_mobile_number" : "",
+            "money" : 0
+        }
+
+##  USER DATA UPDATE/CREATE [/users]
 
 ### Update/Add User [PUT]
 
