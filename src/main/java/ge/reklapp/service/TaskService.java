@@ -10,9 +10,11 @@ import javax.mail.internet.AddressException;
 import javax.mail.internet.InternetAddress;
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
+import java.util.Calendar;
 
 /**
  * Created by Tornike on 10.07.2016.
@@ -21,6 +23,65 @@ import java.sql.ResultSet;
 @Consumes( { MediaType.APPLICATION_JSON})
 @Produces( { MediaType.APPLICATION_JSON})
 public class TaskService {
+    @POST
+    @Path("/ads/{ad_id}/view")
+    public StatusResponse increaseView(@PathParam("ad_id") int ad_id){ // increase view_left by one.
+        StatusResponse statusResponse = new StatusResponse("");
+        try (Connection con = DBConnectionProvider.getConnection()) {
+            try (PreparedStatement st =
+                         con.prepareStatement("UPDATE ads SET view_left=view_left+1 WHERE ad_id=?",
+                                 ResultSet.TYPE_SCROLL_SENSITIVE,
+                                 ResultSet.CONCUR_UPDATABLE)) {
+
+                st.setInt(1, ad_id);
+
+                int size = st.executeUpdate();
+
+                if (size > 0){
+                    statusResponse.setProblem("Request completed.");
+                } else {
+                    statusResponse.setProblem("Problem occurred.");
+                }
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            statusResponse.setProblem("Problem occurred.");
+        }
+        return statusResponse;
+    }
+
+
+    @POST
+    @Path("/pairs/{pair_id}/date")
+    public StatusResponse changeDate(@PathParam("pair_id") int pair_id){ // change date to now.
+        StatusResponse statusResponse = new StatusResponse("");
+        try (Connection con = DBConnectionProvider.getConnection()) {
+            try (PreparedStatement st =
+                         con.prepareStatement("UPDATE pairs SET last_seen=? WHERE pair_id=?",
+                                 ResultSet.TYPE_SCROLL_SENSITIVE,
+                                 ResultSet.CONCUR_UPDATABLE)) {
+
+                Calendar calendar = Calendar.getInstance();
+                java.util.Date currentDate = calendar.getTime();
+                java.sql.Date date = new java.sql.Date(currentDate.getTime());
+                st.setDate(1, date);
+                st.setInt(2, pair_id);
+
+                int size = st.executeUpdate();
+
+                if (size > 0){
+                    statusResponse.setProblem("Request completed.");
+                } else {
+                    statusResponse.setProblem("Problem occurred.");
+                }
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            statusResponse.setProblem("Problem occurred.");
+        }
+        return statusResponse;
+    }
+
     @GET
     @Path("/users/{mobile_number}/{password}")
     public UserInfo getUser(@PathParam("mobile_number") String mobile_number, @PathParam("password") String password){
@@ -120,6 +181,8 @@ public class TaskService {
                                             adInfo.setPair_id(pair_id);
                                             adInfo.setProduct(res3.getString("product"));
                                             adInfo.setView_gain(res3.getDouble("view_gain"));
+                                            adInfo.setView_gain(res3.getDouble("view_gain"));
+                                            adInfo.setAd_id(ad_id);
                                         }else{
                                             adInfo.setStatus("problem occurred.");
                                         }
@@ -192,9 +255,9 @@ public class TaskService {
                             st2.setString(2, mobile_number);
                             int size = st2.executeUpdate();
                             if (size > 0){
-                                statusResponse.setProblem("Transfer Completed.");
+                                statusResponse.setProblem("Transfer completed.");
                             }else{
-                                statusResponse.setProblem("Transfer was NOT completed. Problem occurred.");
+                                statusResponse.setProblem("Transfer was not completed. Problem occurred.");
                             }
                         }
                     }else{
@@ -205,7 +268,7 @@ public class TaskService {
 
         } catch (Exception e) {
             e.printStackTrace();
-            statusResponse.setProblem("Transfer was NOT completed. Problem occurred.");
+            statusResponse.setProblem("Transfer was not completed. Problem occurred.");
         }
         return statusResponse;
     }
