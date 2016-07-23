@@ -424,7 +424,7 @@ public class TaskService {
             statusResponse.setProblem("Email address is not valid.");
             return;
         }
-        if (!info.getOld_mobile_number().equals(info.getMobile_number())){
+        if (info.getOld_mobile_number().compareTo(info.getMobile_number()) != 0){
             try (Connection con = DBConnectionProvider.getConnection()) {
                 try (PreparedStatement st =
                              con.prepareStatement("SELECT * FROM users WHERE mobile_number=?",
