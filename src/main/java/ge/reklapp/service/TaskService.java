@@ -390,38 +390,38 @@ public class TaskService {
     private void checkUserInfo(UserInfo info, StatusResponse statusResponse){
         // sheamowme shemomavali info da naxe shemosuli nomeri ukve xo ar aqvs vinmes.
         if (info.getName().length() == 0){
-            statusResponse.setProblem("Enter name");
+            statusResponse.setProblem("შეიყვანეთ სახელი");
             return;
         }
         if (info.getSurname().length() == 0){
-            statusResponse.setProblem("Enter surname");
+            statusResponse.setProblem("შეიყვანეთ გვარი");
             return;
         }
 
         if (info.getPassword().length() < 6 || info.getPassword().length() > 20){
-            statusResponse.setProblem("Password length must be between 6-20");
+            statusResponse.setProblem("პაროლის სიგრძე უნდა იყოს 6-დან 20-მდე");
             return;
         }
 
         String pin = info.getPin();
         if (pin.length() != 11 && pin.length() != 0){
-            statusResponse.setProblem("Pin must have 9 cyphers");
+            statusResponse.setProblem("პირადი ნომერი უნდა შეიცავდეს 11 ციფრს");
             return;
         }
         for (int i = 0; i < pin.length(); i++){
             if (!(pin.charAt(i) <= '9' && pin.charAt(i) >='0')){
-                statusResponse.setProblem("Pin must consist of cyphers");
+                statusResponse.setProblem("პირადი ნომერი უნდ აშედგებოდეს მხოლოდ ციფრებისაგან");
                 return;
             }
         }
         String mobile_number = info.getMobile_number();
         if (mobile_number.length() != 9 || mobile_number.charAt(0) != '5'){
-            statusResponse.setProblem("Enter real mobile number. We will check.");
+            statusResponse.setProblem("მობილურის ნორმის ფორმატი არასწორია");
             return;
         }
         String email = info.getEmail();
         if (email.length() > 0 && !isValidEmailAddress(email)){
-            statusResponse.setProblem("Email address is not valid.");
+            statusResponse.setProblem("ელ. ფოსტის ფორმატი არასწორია");
             return;
         }
         if (info.getOld_mobile_number().compareTo(info.getMobile_number()) != 0){
@@ -436,14 +436,14 @@ public class TaskService {
                     ResultSet res = st.executeQuery();
                     res.first();
                     if (res.getRow() > 0){
-                        statusResponse.setProblem("This number is already taken.");
+                        statusResponse.setProblem("ნომერი უკვე დაკავებულია სხვა მომხმარებლის მიერ");
                     }
 
                 }
 
             } catch (Exception e) {
                 e.printStackTrace();
-                statusResponse.setProblem("Something went wrong. Look your information carefully.");
+                statusResponse.setProblem("მოხდა შეცდომა. მოგვიანებით სცადეთ");
             }
         }
     }
