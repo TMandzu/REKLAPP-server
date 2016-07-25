@@ -146,7 +146,7 @@ public class TaskService {
                     boolean flag = true;
                     int user_id = res.getInt("user_id");
                     try (PreparedStatement check_st =
-                                 con.prepareStatement("SELECT * FROM pairs WHERE user_id=? and extract (epoch from (CURRENT_TIMESTAMP - last_seen::timestamp))::integer/60 < 5 ORDER BY random() LIMIT 1", // TODO needs change to 24 hours
+                                 con.prepareStatement("SELECT * FROM pairs WHERE user_id=? and extract (epoch from (CURRENT_TIMESTAMP - last_seen::timestamp))::integer/60 < 20 ORDER BY random() LIMIT 1", // TODO needs change to 24 hours
                                          ResultSet.TYPE_SCROLL_SENSITIVE,
                                          ResultSet.CONCUR_UPDATABLE)) {
                         check_st.setInt(1, user_id);
@@ -159,7 +159,7 @@ public class TaskService {
                     }
                     if (flag) {
                         try (PreparedStatement st2 =
-                                     con.prepareStatement("SELECT * FROM pairs WHERE user_id=? and extract (epoch from (CURRENT_TIMESTAMP - last_seen::timestamp))::integer/60 > 5 ORDER BY random() LIMIT 1", // TODO needs change to 24 hours
+                                     con.prepareStatement("SELECT * FROM pairs WHERE user_id=? and extract (epoch from (CURRENT_TIMESTAMP - last_seen::timestamp))::integer/60 > 20 ORDER BY random() LIMIT 1", // TODO needs change to 24 hours
                                              ResultSet.TYPE_SCROLL_SENSITIVE,
                                              ResultSet.CONCUR_UPDATABLE)) {
                             st2.setInt(1, user_id);
