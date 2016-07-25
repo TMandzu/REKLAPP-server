@@ -298,7 +298,7 @@ public class TaskService {
         try {
             Transaction t = new Transaction();
             t.setTo(address);
-            t.setAmount(Money.parse("BTC " + 0.000000001)); // TODO amount gadasaweria GEL TO BTC
+            t.setAmount(Money.parse("BTC " + String.valueOf(amount)));
             t.setNotes("Thanks for watching our ads!");
             cb.sendMoney(t);
         } catch (Exception e){
