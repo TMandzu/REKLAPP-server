@@ -22,8 +22,7 @@ Returns money user have on balance in GEL.
 
 + Parameter
     + mobile_number (required, string, `555555555`)
-    String returned in Location header field.
-    
+
 + Response 200 (application/json)
 
         {
@@ -38,8 +37,7 @@ Returns video link.
 
 + Parameter
     + mobile_number (required, string, `555555555`)
-    String returned in Location header field.
-    
+
 
 + Response 200 (application/json)
 
@@ -50,9 +48,41 @@ Returns video link.
             "company": "freeuni",
             "product": "good education",
             "description": "good uni",
-            "view_gain": 0.01
+            "view_gain": 0.01,
+            "ad_id" : 1
         }
         
+## Update date [/pairs/{pair_id}/date]
+
+### Update pair date [POST]
+
+changes date to current date in pair.
+
++ Parameter
+    + pair_id (required, string, `1`)
+
+
++ Response 200 (application/json)
+
+        {
+            "problem" : "Request completed."
+        }
+     
+## Increase view_left [/ads/{ad_id}/view]
+
+### Increase view_left by one in ads [POST]
+
+Increases view_left by one in ads.
+
++ Parameter
+    + ad_id (required, String, `3`)
+
+
++ Response 200 (application/json)
+
+        {
+            "problem" : "Request completed."
+        }   
         
         
 ## User Data GET [/users/{mobile_number}/{password}]
@@ -63,9 +93,7 @@ Returns user for requested mobile number and password.
 
 + Parameter
     + mobile_number (required, string, `555555555`)
-    String returned in Location header field.
     + password (required, string, `პაროლი`)
-    String returned in Location header field.
 
 + Request (application/json)
 
@@ -181,10 +209,8 @@ Transfers money to your Mobile/Bank balance.
 
 + Parameter
     + mobile_number (required, string, `555555555`)
-    String returned in Location header field.
-    
+
     + address (required, string, `555555555`)
-    String returned in Location header field.
 
 + Request (application/json)
 
