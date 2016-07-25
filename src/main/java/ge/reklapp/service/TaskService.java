@@ -44,12 +44,12 @@ public class TaskService {
                     if (size > 0) {
                         statusResponse.setProblem("Request completed.");
                     } else {
-                        statusResponse.setProblem("Problem occurred.");
+                        statusResponse.setProblem("მოხდა შეცდომა.");
                     }
                 }
             } catch (Exception e) {
                 e.printStackTrace();
-                statusResponse.setProblem("Problem occurred.");
+                statusResponse.setProblem("მოხდა შეცდომა.");
             }
             return statusResponse;
         }
@@ -78,12 +78,12 @@ public class TaskService {
                     if (size > 0) {
                         statusResponse.setProblem("Request completed.");
                     } else {
-                        statusResponse.setProblem("Problem occurred.");
+                        statusResponse.setProblem("მოხდა შეცდომა.");
                     }
                 }
             } catch (Exception e) {
                 e.printStackTrace();
-                statusResponse.setProblem("Problem occurred.");
+                statusResponse.setProblem("მოხდა შეცდომა.");
             }
             return statusResponse;
         }
@@ -149,7 +149,7 @@ public class TaskService {
                     ResultSet res = st.executeQuery();
                     res.first();
                     if (res.getRow() == 0) {
-                        adInfo.setStatus("Could not find user.");
+                        adInfo.setStatus("ვერ გპოულობთ ბაზაში.");
                     } else {
                         boolean flag = true;
                         int user_id = res.getInt("user_id");
@@ -161,7 +161,7 @@ public class TaskService {
                             ResultSet check_res = check_st.executeQuery();
                             check_res.first();
                             if (check_res.getRow() > Constants.DAY_LIMIT) {
-                                adInfo.setStatus("There are no ads for you now.");
+                                adInfo.setStatus("დღეს ამოწურეთ თქვენი რეკლამების ყურების ლიმიტი.");
                                 flag = false;
                             }
                         }
@@ -174,7 +174,7 @@ public class TaskService {
                                 ResultSet res2 = st2.executeQuery();
                                 res2.first();
                                 if (res2.getRow() == 0) {
-                                    adInfo.setStatus("There are no ads for you now.");
+                                    adInfo.setStatus("ჯერჯერობით თქვენთვის რეკლამები არ გვაქვს.");
                                 } else {
                                     int ad_id = res2.getInt("ad_id");
                                     int pair_id = res2.getInt("pair_id");
@@ -186,7 +186,7 @@ public class TaskService {
                                         ResultSet res3 = st3.executeQuery();
                                         res3.first();
                                         if (res3.getRow() == 0) {
-                                            adInfo.setStatus("There are no ads for you now.");
+                                            adInfo.setStatus("ჯერჯერობით თქვენთვის რეკლამები არ გვაქვს.");
                                         } else {
                                             int view_left = res3.getInt("view_left") - 1;
                                             try (PreparedStatement st4 =
@@ -207,7 +207,7 @@ public class TaskService {
                                                     adInfo.setView_gain(res3.getDouble("view_gain"));
                                                     adInfo.setAd_id(ad_id);
                                                 } else {
-                                                    adInfo.setStatus("problem occurred.");
+                                                    adInfo.setStatus("მოხდა შეცდომა.");
                                                 }
                                             }
                                         }
@@ -219,7 +219,7 @@ public class TaskService {
                 }
             } catch (Exception e) {
                 e.printStackTrace();
-                adInfo.setStatus("Problem occurred.");
+                adInfo.setStatus("მოხდა შეცდომა.");
             }
             return adInfo;
         }
@@ -267,7 +267,7 @@ public class TaskService {
                     ResultSet res = st.executeQuery();
                     res.first();
                     if (res.getRow() == 0) {
-                        statusResponse.setProblem("Could not find user.");
+                        statusResponse.setProblem("ვერ გპოულობთ ბაზაში.");
                     } else {
                         double amountNow = res.getDouble("money");
                         double delta = moneyInfo.getAmount();
@@ -285,18 +285,18 @@ public class TaskService {
                                 if (size > 0) {
                                     statusResponse.setProblem("Transfer completed.");
                                 } else {
-                                    statusResponse.setProblem("Transfer was not completed. Problem occurred.");
+                                    statusResponse.setProblem("მოხდა შეცდომა.");
                                 }
                             }
                         } else {
-                            statusResponse.setProblem("Transfer could not complete.");
+                            statusResponse.setProblem("მოხდა შეცდომა.");
                         }
                     }
                 }
 
             } catch (Exception e) {
                 e.printStackTrace();
-                statusResponse.setProblem("Transfer was not completed. Problem occurred.");
+                statusResponse.setProblem("მოხდა შეცდომა.");
             }
             return statusResponse;
         }
@@ -370,7 +370,7 @@ public class TaskService {
                             if (size > 0) {
                                 statusResponse.setProblem("Update completed.");
                             } else {
-                                statusResponse.setProblem("Something went wrong. Look your information carefully.");
+                                statusResponse.setProblem("მოხდა შეცდომა.");
                             }
 
                         }
@@ -402,7 +402,7 @@ public class TaskService {
                             if (size > 0) {
                                 statusResponse.setProblem("Update completed.");
                             } else {
-                                statusResponse.setProblem("Something went wrong. Look your information carefully.");
+                                statusResponse.setProblem("მოხდა შეცდომა.");
                             }
 
                         }
@@ -411,7 +411,7 @@ public class TaskService {
 
             } catch (Exception e) {
                 e.printStackTrace();
-                statusResponse.setProblem("Something went wrong. Look your information carefully.");
+                statusResponse.setProblem("მოხდა შეცდომა.");
             }
 
             return statusResponse;
