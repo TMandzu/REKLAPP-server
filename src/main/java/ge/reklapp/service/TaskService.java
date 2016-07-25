@@ -3,6 +3,7 @@ package ge.reklapp.service;
 import com.coinbase.api.Coinbase;
 import com.coinbase.api.CoinbaseBuilder;
 import com.coinbase.api.entity.Transaction;
+import ge.reklapp.core.Constants;
 import ge.reklapp.db.DBConnectionProvider;
 import org.joda.money.Money;
 
@@ -142,49 +143,64 @@ public class TaskService {
                 if (res.getRow() == 0){
                     adInfo.setStatus("Could not find user.");
                 }else{
+                    boolean flag = true;
                     int user_id = res.getInt("user_id");
-                    try (PreparedStatement st2 =
-                                 con.prepareStatement("SELECT * FROM pairs WHERE user_id=? and extract (epoch from (CURRENT_TIMESTAMP - last_seen::timestamp))::integer/60 > 5 ORDER BY random() LIMIT 1", // TODO needs change to 24 hours
+                    try (PreparedStatement check_st =
+                                 con.prepareStatement("SELECT * FROM pairs WHERE user_id=? and extract (epoch from (CURRENT_TIMESTAMP - last_seen::timestamp))::integer/60 < 5 ORDER BY random() LIMIT 1", // TODO needs change to 24 hours
                                          ResultSet.TYPE_SCROLL_SENSITIVE,
                                          ResultSet.CONCUR_UPDATABLE)) {
-                        st2.setInt(1, user_id);
-                        ResultSet res2 = st2.executeQuery();
-                        res2.first();
-                        if (res2.getRow() == 0){
+                        check_st.setInt(1, user_id);
+                        ResultSet check_res = check_st.executeQuery();
+                        check_res.first();
+                        if (check_res.getRow() > Constants.DAY_LIMIT) {
                             adInfo.setStatus("There are no ads for you now.");
-                        }else{
-                            int ad_id = res2.getInt("ad_id");
-                            int pair_id = res2.getInt("pair_id");
-                            try (PreparedStatement st3 =
-                                         con.prepareStatement("SELECT * FROM ads WHERE ad_id=? and view_left > 0",
-                                                 ResultSet.TYPE_SCROLL_SENSITIVE,
-                                                 ResultSet.CONCUR_UPDATABLE)) {
-                                st3.setInt(1, ad_id);
-                                ResultSet res3 = st3.executeQuery();
-                                res3.first();
-                                if (res3.getRow() == 0){
-                                    adInfo.setStatus("There are no ads for you now.");
-                                }else{
-                                    int view_left = res3.getInt("view_left") - 1;
-                                    try (PreparedStatement st4 =
-                                                 con.prepareStatement("UPDATE ads SET view_left=? WHERE ad_id=?",
-                                                         ResultSet.TYPE_SCROLL_SENSITIVE,
-                                                         ResultSet.CONCUR_UPDATABLE)){
-                                        st4.setInt(1, view_left);
-                                        st4.setInt(2, ad_id);
-                                        int size = st4.executeUpdate();
-                                        if (size > 0){
-                                            adInfo.setStatus("Request completed.");
-                                            adInfo.setDescription(res3.getString("description"));
-                                            adInfo.setCompany(res3.getString("company"));
-                                            adInfo.setLink(res3.getString("link"));
-                                            adInfo.setPair_id(pair_id);
-                                            adInfo.setProduct(res3.getString("product"));
-                                            adInfo.setView_gain(res3.getDouble("view_gain"));
-                                            adInfo.setView_gain(res3.getDouble("view_gain"));
-                                            adInfo.setAd_id(ad_id);
-                                        }else{
-                                            adInfo.setStatus("problem occurred.");
+                            flag = false;
+                        }
+                    }
+                    if (flag) {
+                        try (PreparedStatement st2 =
+                                     con.prepareStatement("SELECT * FROM pairs WHERE user_id=? and extract (epoch from (CURRENT_TIMESTAMP - last_seen::timestamp))::integer/60 > 5 ORDER BY random() LIMIT 1", // TODO needs change to 24 hours
+                                             ResultSet.TYPE_SCROLL_SENSITIVE,
+                                             ResultSet.CONCUR_UPDATABLE)) {
+                            st2.setInt(1, user_id);
+                            ResultSet res2 = st2.executeQuery();
+                            res2.first();
+                            if (res2.getRow() == 0) {
+                                adInfo.setStatus("There are no ads for you now.");
+                            } else {
+                                int ad_id = res2.getInt("ad_id");
+                                int pair_id = res2.getInt("pair_id");
+                                try (PreparedStatement st3 =
+                                             con.prepareStatement("SELECT * FROM ads WHERE ad_id=? and view_left > 0",
+                                                     ResultSet.TYPE_SCROLL_SENSITIVE,
+                                                     ResultSet.CONCUR_UPDATABLE)) {
+                                    st3.setInt(1, ad_id);
+                                    ResultSet res3 = st3.executeQuery();
+                                    res3.first();
+                                    if (res3.getRow() == 0) {
+                                        adInfo.setStatus("There are no ads for you now.");
+                                    } else {
+                                        int view_left = res3.getInt("view_left") - 1;
+                                        try (PreparedStatement st4 =
+                                                     con.prepareStatement("UPDATE ads SET view_left=? WHERE ad_id=?",
+                                                             ResultSet.TYPE_SCROLL_SENSITIVE,
+                                                             ResultSet.CONCUR_UPDATABLE)) {
+                                            st4.setInt(1, view_left);
+                                            st4.setInt(2, ad_id);
+                                            int size = st4.executeUpdate();
+                                            if (size > 0) {
+                                                adInfo.setStatus("Request completed.");
+                                                adInfo.setDescription(res3.getString("description"));
+                                                adInfo.setCompany(res3.getString("company"));
+                                                adInfo.setLink(res3.getString("link"));
+                                                adInfo.setPair_id(pair_id);
+                                                adInfo.setProduct(res3.getString("product"));
+                                                adInfo.setView_gain(res3.getDouble("view_gain"));
+                                                adInfo.setView_gain(res3.getDouble("view_gain"));
+                                                adInfo.setAd_id(ad_id);
+                                            } else {
+                                                adInfo.setStatus("problem occurred.");
+                                            }
                                         }
                                     }
                                 }
