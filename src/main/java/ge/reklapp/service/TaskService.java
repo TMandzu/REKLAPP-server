@@ -144,7 +144,7 @@ public class TaskService {
                 }else{
                     int user_id = res.getInt("user_id");
                     try (PreparedStatement st2 =
-                                 con.prepareStatement("SELECT * FROM pairs WHERE user_id=? ORDER BY random() LIMIT 1",
+                                 con.prepareStatement("SELECT * FROM pairs WHERE user_id=? and datediff(minute,last_seen, curdate()) < 5 ORDER BY random() LIMIT 1",
                                          ResultSet.TYPE_SCROLL_SENSITIVE,
                                          ResultSet.CONCUR_UPDATABLE)) {
                         st2.setInt(1, user_id);
