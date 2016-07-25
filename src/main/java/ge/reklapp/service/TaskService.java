@@ -154,7 +154,7 @@ public class TaskService {
                         boolean flag = true;
                         int user_id = res.getInt("user_id");
                         try (PreparedStatement check_st =
-                                     con.prepareStatement("SELECT * FROM pairs WHERE user_id=? and extract (epoch from (CURRENT_TIMESTAMP - last_seen::timestamp))::integer/60 < 20 ORDER BY random() LIMIT 1", // TODO needs change to 24 hours
+                                     con.prepareStatement("SELECT * FROM pairs WHERE user_id=? and extract (epoch from (CURRENT_TIMESTAMP - last_seen::timestamp))::integer/60 < 24*60 ORDER BY random() LIMIT 1",
                                              ResultSet.TYPE_SCROLL_SENSITIVE,
                                              ResultSet.CONCUR_UPDATABLE)) {
                             check_st.setInt(1, user_id);
@@ -167,7 +167,7 @@ public class TaskService {
                         }
                         if (flag) {
                             try (PreparedStatement st2 =
-                                         con.prepareStatement("SELECT * FROM pairs WHERE user_id=? and extract (epoch from (CURRENT_TIMESTAMP - last_seen::timestamp))::integer/60 > 20 ORDER BY random() LIMIT 1", // TODO needs change to 24 hours
+                                         con.prepareStatement("SELECT * FROM pairs WHERE user_id=? and extract (epoch from (CURRENT_TIMESTAMP - last_seen::timestamp))::integer/60 > 24*60 ORDER BY random() LIMIT 1",
                                                  ResultSet.TYPE_SCROLL_SENSITIVE,
                                                  ResultSet.CONCUR_UPDATABLE)) {
                                 st2.setInt(1, user_id);
@@ -278,7 +278,7 @@ public class TaskService {
                             try (PreparedStatement st2 =
                                          con.prepareStatement("UPDATE users SET money=? WHERE mobile_number=?",
                                                  ResultSet.TYPE_SCROLL_SENSITIVE,
-                                                 ResultSet.CONCUR_UPDATABLE)) { // TODO es ro ver gamovides faqtiurad fuls vchuqnit
+                                                 ResultSet.CONCUR_UPDATABLE)) {
                                 st2.setDouble(1, newAmount);
                                 st2.setString(2, mobile_number);
                                 int size = st2.executeUpdate();
