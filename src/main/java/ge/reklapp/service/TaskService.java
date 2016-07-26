@@ -15,6 +15,7 @@ import javax.ws.rs.core.Response;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
+import java.sql.Timestamp;
 import java.util.Calendar;
 
 /**
@@ -67,10 +68,8 @@ public class TaskService {
                                      ResultSet.TYPE_SCROLL_SENSITIVE,
                                      ResultSet.CONCUR_UPDATABLE)) {
 
-                    Calendar calendar = Calendar.getInstance();
-                    java.util.Date currentDate = calendar.getTime();
-                    java.sql.Date date = new java.sql.Date(currentDate.getTime());
-                    st.setDate(1, date);
+                    Timestamp stamp = new Timestamp(System.currentTimeMillis());
+                    st.setTimestamp(1, stamp);
                     st.setInt(2, pair_id);
 
                     int size = st.executeUpdate();
