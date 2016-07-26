@@ -419,15 +419,6 @@ public class TaskService {
 
     private void checkUserInfo(UserInfo info, StatusResponse statusResponse){
         // sheamowme shemomavali info da naxe shemosuli nomeri ukve xo ar aqvs vinmes.
-        if (info.getName().length() == 0){
-            statusResponse.setProblem("შეიყვანეთ სახელი");
-            return;
-        }
-        if (info.getSurname().length() == 0){
-            statusResponse.setProblem("შეიყვანეთ გვარი");
-            return;
-        }
-
         if (info.getPassword().length() < 6 || info.getPassword().length() > 20){
             statusResponse.setProblem("პაროლის სიგრძე უნდა იყოს 6-დან 20-მდე");
             return;
