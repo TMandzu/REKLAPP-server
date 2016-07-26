@@ -392,7 +392,7 @@ public class TaskService {
                                         int ad_id = ad_res.getInt("ad_id");
 
                                         try (PreparedStatement user_st =
-                                                     con.prepareStatement("SELECT * FROM (select * FROM users where mobile_number=?) " + filter,
+                                                     con.prepareStatement("SELECT * FROM (select * FROM users where mobile_number=?) x " + filter,
                                                              ResultSet.TYPE_SCROLL_SENSITIVE,
                                                              ResultSet.CONCUR_UPDATABLE)) {
                                             user_st.setString(1, info.getMobile_number());
