@@ -368,6 +368,54 @@ public class TaskService {
                             int size = st.executeUpdate();
                             if (size > 0) {
                                 statusResponse.setProblem("Update completed.");
+                                int user_id = -1;
+
+                                try (PreparedStatement id_st =
+                                             con.prepareStatement("SELECT * FROM users WHERE mobile_number=?",
+                                                     ResultSet.TYPE_SCROLL_SENSITIVE,
+                                                     ResultSet.CONCUR_UPDATABLE)) {
+                                    id_st.setString(1, info.getMobile_number());
+                                    ResultSet id_res = id_st.executeQuery();
+                                    id_res.first();
+                                    if (id_res.getRow() > 0){
+                                        user_id = id_res.getInt("user_id");
+                                    }
+                                }
+
+                                try (PreparedStatement ad_st =
+                                             con.prepareStatement("SELECT * FROM ads",
+                                                     ResultSet.TYPE_SCROLL_SENSITIVE,
+                                                     ResultSet.CONCUR_UPDATABLE)) {
+                                    ResultSet ad_res = ad_st.executeQuery();
+                                    while (ad_res.next()) {
+                                        String filter = ad_res.getString("filter");
+                                        int ad_id = ad_res.getInt("ad_id");
+
+                                        try (PreparedStatement user_st =
+                                                     con.prepareStatement("SELECT * FROM (select * FROM users where mobile_number=?) " + filter,
+                                                             ResultSet.TYPE_SCROLL_SENSITIVE,
+                                                             ResultSet.CONCUR_UPDATABLE)) {
+                                            user_st.setString(1, info.getMobile_number());
+                                            ResultSet user_res = user_st.executeQuery();
+                                            user_res.first();
+                                            if (user_res.getRow() > 0){
+                                                try (PreparedStatement pair_st =
+                                                             con.prepareStatement("INSERT INTO PAIRS (user_id, ad_id, last_seen) VALUES (?,?,?)",
+                                                                     ResultSet.TYPE_SCROLL_SENSITIVE,
+                                                                     ResultSet.CONCUR_UPDATABLE)) {
+                                                    pair_st.setInt(1, user_id);
+                                                    pair_st.setInt(2, ad_id);
+                                                    pair_st.setTimestamp(3, new Timestamp(0));
+                                                    pair_st.executeUpdate();
+                                                }
+                                            }
+                                        }
+
+                                    }
+                                } catch (Exception e){
+                                    e.printStackTrace();
+                                }
+
                             } else {
                                 statusResponse.setProblem("მოხდა შეცდომა.");
                             }
