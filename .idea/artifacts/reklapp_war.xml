@@ -1,0 +1,8 @@
+<component name="ArtifactManager">
+  <artifact type="war" name="reklapp:war">
+    <output-path>$PROJECT_DIR$/target</output-path>
+    <root id="archive" name="REKLAPP-server.war">
+      <element id="artifact" artifact-name="reklapp:war exploded" />
+    </root>
+  </artifact>
+</component>
